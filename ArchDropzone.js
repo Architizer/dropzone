@@ -354,12 +354,7 @@ Emitter.prototype.hasListeners = function(event){
       },
       removedfile: function(file) {
         var _ref;
-        if (file.previewElement) {
-          $(file.previewElement).fadeOut(200, function() {
-            $(this).remove();
-          });
-        }
-        //return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+        return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
       },
       thumbnail: function(file, dataUrl) {
         var thumbnailElement;
