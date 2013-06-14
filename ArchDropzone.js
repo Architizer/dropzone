@@ -1,3 +1,8 @@
+// This version of Dropzone.js has been modified for Architizer.
+// A handful of these modifications use jQuery (whereas the original
+// version does not depend on jQuery)
+// (LK)
+
 // Uses AMD or browser globals to create a jQuery plugin.
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
@@ -186,7 +191,7 @@ Emitter.prototype.hasListeners = function(event){
 */
 
 
-(function() {
+(function($) {
   var Dropzone, Em, camelize, contentLoaded, noop, without,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -230,6 +235,7 @@ Emitter.prototype.hasListeners = function(event){
       acceptParameter: null,
       enqueueForUpload: true,
       previewsContainer: null,
+      dropTarget: null,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
@@ -327,23 +333,38 @@ Emitter.prototype.hasListeners = function(event){
       addedfile: function(file) {
         
         file.previewElement = Dropzone.createElement(this.options.previewTemplate);
-        if (!file.previewElement.classList && file.previewElement.nextSibling);
-        file.previewElement = file.previewElement.nextSibling;
+        // Hack!!
+        if (!file.previewElement.classList && file.previewElement.nextSibling) {
+          file.previewElement = file.previewElement.nextSibling;
+        }
+
+        $(file.previewElement).data('file', file);
 
         file.previewTemplate = file.previewElement;
-        this.previewsContainer.appendChild(file.previewElement);
+
+        if (this.dropTarget) {
+          $(this.dropTarget).before(file.previewElement);
+        } else {
+          this.previewsContainer.appendChild(file.previewElement);
+        }
+
         //file.previewElement.querySelector("[data-dz-name]").textContent = file.name;
         //file.previewElement.querySelector("[data-dz-size]").innerHTML = this.filesize(file.size);
         return true;
       },
       removedfile: function(file) {
         var _ref;
-        return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
+        if (file.previewElement) {
+          $(file.previewElement).fadeOut(200, function() {
+            $(this).remove();
+          });
+        }
+        //return (_ref = file.previewElement) != null ? _ref.parentNode.removeChild(file.previewElement) : void 0;
       },
       thumbnail: function(file, dataUrl) {
         var thumbnailElement;
-        // file.previewElement.classList.remove("dz-file-preview");
-        // file.previewElement.classList.add("dz-image-preview");
+        file.previewElement.classList.remove("dz-file-preview");
+        file.previewElement.classList.add("dz-image-preview");
         // thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]");
         // thumbnailElement.alt = file.name;
         // return thumbnailElement.src = dataUrl;
@@ -353,7 +374,7 @@ Emitter.prototype.hasListeners = function(event){
         //return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
       },
       processingfile: function(file) {
-        //return file.previewElement.classList.add("dz-processing");
+        return file.previewElement.classList.add("dz-processing");
       },
       uploadprogress: function(file, progress, bytesSent) {
         //return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
@@ -431,6 +452,10 @@ Emitter.prototype.hasListeners = function(event){
         } else {
           this.clickableElements = Dropzone.getElements(this.options.clickable, "clickable");
         }
+      }
+      if (this.options.dropTarget) {
+        this.dropTarget = this.options.dropTarget;
+        this.clickableElements.push(this.dropTarget);
       }
       this.init();
     }
@@ -778,33 +803,33 @@ Emitter.prototype.hasListeners = function(event){
         _this = this;
       fileReader = new FileReader;
       fileReader.onload = function() {
-        var img;
-        img = new Image;
-        img.onload = function() {
-          var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
-          file.width = img.width;
-          file.height = img.height;
-          resizeInfo = _this.options.resize.call(_this, file);
-          if (resizeInfo.trgWidth == null) {
-            resizeInfo.trgWidth = _this.options.thumbnailWidth;
-          }
-          if (resizeInfo.trgHeight == null) {
-            resizeInfo.trgHeight = _this.options.thumbnailHeight;
-          }
-          canvas = document.createElement("canvas");
-          ctx = canvas.getContext("2d");
-          canvas.width = resizeInfo.trgWidth;
-          canvas.height = resizeInfo.trgHeight;
-          ctx.drawImage(img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
-          thumbnail = canvas.toDataURL("image/png");
-          return _this.emit("thumbnail", file, thumbnail);
-        };
+        // var img;
+        // img = new Image;
+        // img.onload = function() {
+        //   var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
+        //   file.width = img.width;
+        //   file.height = img.height;
+        //   resizeInfo = _this.options.resize.call(_this, file);
+        //   if (resizeInfo.trgWidth == null) {
+        //     resizeInfo.trgWidth = _this.options.thumbnailWidth;
+        //   }
+        //   if (resizeInfo.trgHeight == null) {
+        //     resizeInfo.trgHeight = _this.options.thumbnailHeight;
+        //   }
+        //   canvas = document.createElement("canvas");
+        //   ctx = canvas.getContext("2d");
+        //   canvas.width = resizeInfo.trgWidth;
+        //   canvas.height = resizeInfo.trgHeight;
+        //   ctx.drawImage(img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
+        //   thumbnail = canvas.toDataURL("image/png");
+        //   return _this.emit("thumbnail", file, thumbnail);
+        // };
 
-        jQuery(file.previewElement).find('.img').css({
+        $(file.previewElement).find('.img').css({
           backgroundImage: 'url(' + fileReader.result + ')'
         });
 
-        return img.src = fileReader.result;
+        //return img.src = fileReader.result;
       };
       return fileReader.readAsDataURL(file);
     };
@@ -1242,7 +1267,7 @@ Emitter.prototype.hasListeners = function(event){
 
   contentLoaded(window, Dropzone.discover);
 
-}).call(this);
+}).call(this, jQuery);
 
     return module.exports;
 }));
