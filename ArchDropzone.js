@@ -325,9 +325,11 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.classList.remove("dz-started");
       },
       addedfile: function(file) {
-        //console.warn('66666666666666');
-        //console.log(this.options.previewTemplate);
+        
         file.previewElement = Dropzone.createElement(this.options.previewTemplate);
+        if (!file.previewElement.classList && file.previewElement.nextSibling);
+        file.previewElement = file.previewElement.nextSibling;
+
         file.previewTemplate = file.previewElement;
         this.previewsContainer.appendChild(file.previewElement);
         //file.previewElement.querySelector("[data-dz-name]").textContent = file.name;
@@ -340,21 +342,21 @@ Emitter.prototype.hasListeners = function(event){
       },
       thumbnail: function(file, dataUrl) {
         var thumbnailElement;
-        file.previewElement.classList.remove("dz-file-preview");
-        file.previewElement.classList.add("dz-image-preview");
-        thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]");
-        thumbnailElement.alt = file.name;
-        return thumbnailElement.src = dataUrl;
+        // file.previewElement.classList.remove("dz-file-preview");
+        // file.previewElement.classList.add("dz-image-preview");
+        // thumbnailElement = file.previewElement.querySelector("[data-dz-thumbnail]");
+        // thumbnailElement.alt = file.name;
+        // return thumbnailElement.src = dataUrl;
       },
       error: function(file, message) {
         file.previewElement.classList.add("dz-error");
-        return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
+        //return file.previewElement.querySelector("[data-dz-errormessage]").textContent = message;
       },
       processingfile: function(file) {
-        return file.previewElement.classList.add("dz-processing");
+        //return file.previewElement.classList.add("dz-processing");
       },
       uploadprogress: function(file, progress, bytesSent) {
-        return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
+        //return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
       },
       totaluploadprogress: noop,
       sending: noop,
@@ -797,6 +799,11 @@ Emitter.prototype.hasListeners = function(event){
           thumbnail = canvas.toDataURL("image/png");
           return _this.emit("thumbnail", file, thumbnail);
         };
+
+        jQuery(file.previewElement).find('.img').css({
+          backgroundImage: 'url(' + fileReader.result + ')'
+        });
+
         return img.src = fileReader.result;
       };
       return fileReader.readAsDataURL(file);
