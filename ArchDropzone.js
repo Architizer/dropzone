@@ -338,6 +338,9 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.classList.remove("dz-drag-hover");
       },
       selectedfiles: function(files) {
+        // Moved this to the addedfile handler, so that dz-started class
+        // only gets added if the files all have valid mime types
+
         //if (this.element === this.previewsContainer) {
         //  return this.element.classList.add("dz-started");
         //}
@@ -356,10 +359,10 @@ Emitter.prototype.hasListeners = function(event){
 
         $p = $(file.previewElement);
 
-        $progress = $('<div class="upload-progress"><div></div></div>');
-        $p.find('.img-holder').append($progress.hide());
-
-        file.$progress = $progress;
+        $progress = $p.find('.upload-progress');
+        if ($progress.length == 1) {
+          file.$progress = $progress;
+        }
 
         $p.data('file', file);
 
@@ -401,13 +404,13 @@ Emitter.prototype.hasListeners = function(event){
         return file.previewElement.classList.add("dz-processing");
       },
       uploadprogress: function(file, progress, bytesSent) {
-
-        if (progress == 100) {
-            file.$progress.hide();
-        } else {
-            file.$progress.show().find('div').css('width', progress + '%');
+        if (file.$progress) {
+          if (progress == 100) {
+              file.$progress.hide();
+          } else {
+              file.$progress.show().find('div').css('width', progress + '%');
+          }
         }
-
 
         //return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
       },
