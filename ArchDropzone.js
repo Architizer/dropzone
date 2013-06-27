@@ -824,12 +824,12 @@ Emitter.prototype.hasListeners = function(event){
       }
     };
 
-    Dropzone.prototype.removeAllFiles = function() {
+    Dropzone.prototype.removeAllFiles = function(include_pending) {
       var file, _i, _len, _ref;
       _ref = this.files.slice();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         file = _ref[_i];
-        if (__indexOf.call(this.filesProcessing, file) < 0) {
+        if (include_pending || __indexOf.call(this.filesProcessing, file) < 0) {
           this.removeFile(file);
         }
       }
