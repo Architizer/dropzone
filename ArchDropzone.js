@@ -612,7 +612,7 @@ Emitter.prototype.hasListeners = function(event){
     Dropzone.prototype.destroy = function() {
       var _ref;
       this.disable();
-      this.removeAllFiles();
+      this.removeAllFiles(true);
       if ((_ref = this.hiddenFileInput) != null ? _ref.parentNode : void 0) {
         this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
         return this.hiddenFileInput = null;
@@ -824,12 +824,15 @@ Emitter.prototype.hasListeners = function(event){
       }
     };
 
-    Dropzone.prototype.removeAllFiles = function() {
+    Dropzone.prototype.removeAllFiles = function(cancelIfNecessary) {
       var file, _i, _len, _ref;
+      if (cancelIfNecessary == null) {
+        cancelIfNecessary = false;
+      }
       _ref = this.files.slice();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         file = _ref[_i];
-        if (__indexOf.call(this.filesProcessing, file) < 0) {
+        if (file.status !== Dropzone.UPLOADING || cancelIfNecessary) {
           this.removeFile(file);
         }
       }
