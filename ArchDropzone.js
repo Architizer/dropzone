@@ -404,14 +404,6 @@ Emitter.prototype.hasListeners = function(event){
         return file.previewElement.classList.add("dz-processing");
       },
       uploadprogress: function(file, progress, bytesSent) {
-        if (file.$progress) {
-          if (progress == 100) {
-              file.$progress.hide();
-          } else {
-              file.$progress.show().find('div').css('width', progress + '%');
-          }
-        }
-
         //return file.previewElement.querySelector("[data-dz-uploadprogress]").style.width = "" + progress + "%";
       },
       totaluploadprogress: noop,
