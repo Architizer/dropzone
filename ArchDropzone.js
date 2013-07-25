@@ -251,6 +251,7 @@ Emitter.prototype.hasListeners = function(event){
       enqueueForUpload: true,
       previewsContainer: null,
       dropTarget: null,
+      singular: false,
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
@@ -503,7 +504,9 @@ Emitter.prototype.hasListeners = function(event){
           }
           _this.hiddenFileInput = document.createElement("input");
           _this.hiddenFileInput.setAttribute("type", "file");
-          _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          if (!_this.options.singular) {
+            _this.hiddenFileInput.setAttribute("multiple", "multiple");
+          }
           if (_this.options.acceptedMimeTypes != null) {
             _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedMimeTypes);
           }
