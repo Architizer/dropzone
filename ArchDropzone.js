@@ -350,7 +350,7 @@ Emitter.prototype.hasListeners = function(event){
         return this.element.classList.remove("dz-started");
       },
       addedfile: function(file) {
-        var $p, $progress;
+        var $p, $progress, _this = this;
 
         file.previewElement = Dropzone.createElement(this.options.previewTemplate);
         // ugly hack alert!!
@@ -379,6 +379,15 @@ Emitter.prototype.hasListeners = function(event){
           $(this.dropTarget).before(file.previewElement);
         } else {
           this.previewsContainer.appendChild(file.previewElement);
+        }
+
+        if (this.options.singular) {
+          $.each(this.files, function(i, f) {
+            if (f !== file) {
+              $(f.previewElement).remove();
+              _this.removeFile(f);
+            }
+          });
         }
 
         //file.previewElement.querySelector("[data-dz-name]").textContent = file.name;
