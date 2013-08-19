@@ -456,6 +456,8 @@ Emitter.prototype.hasListeners = function(event){
         throw new Error("Invalid dropzone element.");
       }
       if (this.element.dropzone) {
+        console.log(this.element);
+        console.log(this.element.dropzone);
         throw new Error("Dropzone already attached.");
       }
       //Dropzone.instances.push(this);
@@ -617,6 +619,7 @@ Emitter.prototype.hasListeners = function(event){
       var _ref;
       this.disable();
       this.removeAllFiles(true);
+      this.element.dropzone = null;
       if ((_ref = this.hiddenFileInput) != null ? _ref.parentNode : void 0) {
         this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
         return this.hiddenFileInput = null;
