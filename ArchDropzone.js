@@ -921,11 +921,15 @@ Emitter.prototype.hasListeners = function(event){
       xhr = new XMLHttpRequest();
       file.xhr = xhr;
       xhr.withCredentials = !!this.options.withCredentials;
-      xhr.open(this.options.method, this.options.url, true);
       response = null;
       handleError = function() {
         return _this.errorProcessing(file, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       };
+      try {
+        xhr.open(this.options.method, this.options.url, true);
+      } catch (e) {
+        return handleError();
+      }
       updateProgress = function(e) {
         var progress;
         if (e != null) {
