@@ -237,7 +237,7 @@ Emitter.prototype.hasListeners = function(event){
       method: "post",
       withCredentials: false,
       parallelUploads: 2,
-      maxFilesize: 256,
+      maxFilesize: 10,
       paramName: "file",
       createImageThumbnails: true,
       renderThumbnail: null,
