@@ -255,7 +255,7 @@ Emitter.prototype.hasListeners = function(event){
       dictDefaultMessage: "Drop files here to upload",
       dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
       dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
-      dictFileTooBig: "File is too big ({{filesize}}MB). Max filesize: {{maxFilesize}}MB.",
+      dictFileTooBig: "File exceeds the maximum size allowed. <span class='nowrap'>({{maxFilesize}} MB).</span>",
       dictInvalidFileType: "You can't upload files of this type.",
       dictResponseError: "Server responded with {{statusCode}} code.",
       accept: function(file, done) {
