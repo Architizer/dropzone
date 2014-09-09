@@ -920,12 +920,12 @@ Emitter.prototype.hasListeners = function(event){
         _this = this;
       xhr = new XMLHttpRequest();
       file.xhr = xhr;
-      xhr.withCredentials = !!this.options.withCredentials;
-      response = null;
       handleError = function() {
         return _this.errorProcessing(file, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       };
       try {
+        xhr.withCredentials = !!this.options.withCredentials;
+        response = null;
         xhr.open(this.options.method, this.options.url, true);
       } catch (e) {
         return handleError();
