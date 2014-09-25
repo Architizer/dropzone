@@ -915,6 +915,20 @@ Emitter.prototype.hasListeners = function(event){
       }
     };
 
+    Dropzone.prototype.openConnection = function (xhr) {
+      try {
+        try {
+          xhr.withCredentials = !!this.options.withCredentials;
+        } catch (e) {
+          // pass
+        }
+        xhr.open(this.options.method, this.options.url, true);
+      } catch (e) {
+        return 0;
+      }
+      return 1;
+    };
+
     Dropzone.prototype.uploadFile = function(file) {
       var formData, handleError, header, headers, input, inputName, inputType, key, name, progressObj, response, updateProgress, value, xhr, _i, _len, _ref, _ref1, _ref2,
         _this = this;
@@ -923,11 +937,7 @@ Emitter.prototype.hasListeners = function(event){
       handleError = function() {
         return _this.errorProcessing(file, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr);
       };
-      try {
-        xhr.withCredentials = !!this.options.withCredentials;
-        response = null;
-        xhr.open(this.options.method, this.options.url, true);
-      } catch (e) {
+      if (!this.openConnection(xhr)) {
         return handleError();
       }
       updateProgress = function(e) {
