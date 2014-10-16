@@ -369,7 +369,7 @@ Emitter.prototype.hasListeners = function(event){
 
         file.previewTemplate = file.previewElement;
 
-        if (!Dropzone.isValidMimeType(file.type, this.options.acceptedMimeTypes)) {
+        if (!Dropzone.isValidMimeType(file, this.options.acceptedMimeTypes)) {
           return false;
         }
 
@@ -780,7 +780,7 @@ Emitter.prototype.hasListeners = function(event){
     Dropzone.prototype.accept = function(file, done) {
       if (file.size > this.options.maxFilesize * 1024 * 1024) {
         return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
-      } else if (!Dropzone.isValidMimeType(file.type, this.options.acceptedMimeTypes)) {
+      } else if (!Dropzone.isValidMimeType(file, this.options.acceptedMimeTypes)) {
         return done(this.options.dictInvalidFileType);
       } else {
         return this.options.accept.call(this, file, done);
@@ -789,7 +789,7 @@ Emitter.prototype.hasListeners = function(event){
 
     Dropzone.prototype.addFile = function(file) {
       var _this = this;
-      if (!Dropzone.isValidMimeType(file.type, this.options.acceptedMimeTypes)) {
+      if (!Dropzone.isValidMimeType(file, this.options.acceptedMimeTypes)) {
         return;
       }
       file.upload = {
@@ -1218,7 +1218,8 @@ Emitter.prototype.hasListeners = function(event){
     return elements;
   };
 
-  Dropzone.isValidMimeType = function(mimeType, acceptedMimeTypes) {
+  Dropzone.isValidMimeType = function(file, acceptedMimeTypes) {
+    var mimeType = file.type;
     var baseMimeType, validMimeType, _i, _len;
     if (!acceptedMimeTypes) {
       return true;
@@ -1228,7 +1229,12 @@ Emitter.prototype.hasListeners = function(event){
     for (_i = 0, _len = acceptedMimeTypes.length; _i < _len; _i++) {
       validMimeType = acceptedMimeTypes[_i];
       validMimeType = validMimeType.trim();
-      if (/\/\*$/.test(validMimeType)) {
+
+      if (validMimeType.charAt(0) == ".") {
+        if (file.name.indexOf(validMimeType, file.name.length - validMimeType.length) != -1) {
+          return true;
+        }
+      } else if (/\/\*$/.test(validMimeType)) {
         if (baseMimeType === validMimeType.replace(/\/.*$/, "")) {
           return true;
         }
